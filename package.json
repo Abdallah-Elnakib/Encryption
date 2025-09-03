@@ -1,0 +1,21 @@
+{
+  "name": "encryption",
+  "version": "1.0.0",
+  "main": "index.js",
+  
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Abdallah-Elnakib/Encryption.git"
+  },
+  "keywords": ["encryption", "security", "patterns", "crypto"],
+  "author": "Abdallah Elnakib",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Abdallah-Elnakib/Encryption/issues"
+  },
+  "homepage": "https://github.com/Abdallah-Elnakib/Encryption#readme",
+  "description": "A simple encryption library using custom patterns and secret key"
+}
