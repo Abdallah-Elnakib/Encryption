@@ -1,3 +1,6 @@
+[![npm version](https://img.shields.io/npm/v/encryption-lib.svg)](https://www.npmjs.com/package/encryption-lib)
+
+
 # 🔐 My Encryption Lib
 
 A simple custom encryption library that uses **character patterns** combined with a **secret key** to generate deterministic encrypted text.  
