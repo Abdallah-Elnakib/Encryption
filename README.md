@@ -21,4 +21,4 @@ This library is mainly educational and designed for lightweight text obfuscation
 First, install via **npm**:
 
 ```bash
-npm install encryption
+npm install encryption-lib
