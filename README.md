@@ -35,6 +35,19 @@ const isValid = verifyEncryption(encrypted, originalText, secretKey);
 console.log('Verification result:', isValid); // true
 ```
 
+```ts
+// TypeScript / ESM
+import { encrypt, verifyEncryption } from 'encryption-lib';
+
+const secretKey = 'my-super-secret-key';
+const originalText = 'Sensitive data 123! @#٪';
+const encrypted = encrypt(originalText, secretKey);
+console.log('Encrypted:', encrypted);
+
+const isValid = verifyEncryption(encrypted, originalText, secretKey);
+console.log('Verification result:', isValid); // true
+```
+
 ## 📖 API Reference
 
 ### `encrypt(text, secretKey)`
@@ -166,10 +179,25 @@ The library uses a `fixed_patterns.json` file that defines encryption patterns f
 
 Each character has multiple 4-character patterns, and the specific pattern used is determined deterministically based on the secret key and character position.
 
+## 🧩 Runtime Notes
+
+- This library is written in **TypeScript** and ships type definitions at `dist/index.d.ts`.
+- The library reads `fixed_patterns.json` at runtime from the package root. The file is included in the published package via the `files` field in `package.json`.
+- Requires **Node.js >= 16**.
+
+## 🛠️ Development
+
+```bash
+npm install          # install deps
+npm run dev          # watch mode (rebuild on change)
+npm run build        # build to dist/
+npm run clean        # remove dist/
+```
+
 ## ⚠️ Security Notes
 
-- 🔐 **Purpose**: This library is designed for obfuscation and light protection rather than military-grade encryption
-- ✅ **Suitable For**:     both client-side and server-side applications
+- 🔐 **Purpose**: This library is designed for obfuscation and light protection rather than military-grade encryption.
+- ✅ **Suitable For**: client-side and server-side applications that need deterministic text obfuscation.
 
 Maintainer: Abdallah Elnakib
 
