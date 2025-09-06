@@ -35,6 +35,13 @@ const isValid = verifyEncryption(encrypted, originalText, secretKey);
 console.log('Verification result:', isValid); // true
 ```
 
+> Note: `encrypt` and `verifyEncryption` use modern AEAD by default. To use the legacy pattern-based mode for obfuscation, pass `{ mode: 'pattern' }`:
+>
+> ```js
+> const legacy = encrypt('Hello', 'key', { mode: 'pattern' });
+> verifyEncryption(legacy, 'Hello', 'key', { mode: 'pattern' });
+> ```
+
 ```ts
 // TypeScript / ESM
 import { encrypt, verifyEncryption } from 'encryption-lib';
@@ -50,7 +57,7 @@ console.log('Verification result:', isValid); // true
 
 ## 📖 API Reference
 
-### `encrypt(text, secretKey)`
+### Legacy (Pattern-based) — `encrypt(text, secretKey)`
 
 Encrypts text using predefined patterns and a secret key.
 
@@ -68,7 +75,7 @@ const encrypted = encrypt('Hello World 123', 'my-secret-key');
 console.log(encrypted); // Output: "x9$FM3@tQ1#z..."
 ```
 
-### `verifyEncryption(encryptedText, originalText, secretKey)`
+### Legacy (Pattern-based) — `verifyEncryption(encryptedText, originalText, secretKey)`
 
 Verifies if encrypted text matches the original text when decrypted with the given key.
 
@@ -178,6 +185,67 @@ The library uses a `fixed_patterns.json` file that defines encryption patterns f
 ```
 
 Each character has multiple 4-character patterns, and the specific pattern used is determined deterministically based on the secret key and character position.
+
+---
+
+## 🔐 Modern Cryptography APIs (Recommended)
+
+These APIs provide confidentiality and integrity using AES-256-GCM (AEAD) with a scrypt-based key derivation.
+
+### `encryptAEAD(plaintext: string, password: string, aad?: string): string`
+- Encrypts the given plaintext with AES-256-GCM.
+- Uses `scrypt` to derive a 256-bit key from the provided password and a random 16-byte salt.
+- Generates a 12-byte random nonce.
+- Optionally binds Additional Authenticated Data (AAD) to the ciphertext.
+- Returns a compact Base64url string with the following format:
+  `v1.aes-256-gcm.scrypt.<salt>.<nonce>.<ciphertext+tag>`
+
+### `decryptAEAD(payload: string, password: string, aad?: string): string`
+- Decrypts a payload produced by `encryptAEAD`.
+- Throws an error if the message was tampered or if the password/AAD are incorrect.
+
+### `sign(text: string, password: string): string`
+- Produces a deterministic HMAC-SHA256 signature (Base64url) for quick verification use-cases.
+- Key is derived via `scrypt` using an internal, fixed salt.
+
+### `verifySignature(text: string, mac: string, password: string): boolean`
+- Verifies an HMAC signature using constant-time comparison.
+
+### Quick Examples
+
+```javascript
+// AEAD encrypt/decrypt
+const { encryptAEAD, decryptAEAD } = require('encryption-lib');
+
+const password = 'very-strong-password';
+const aad = 'my-app-v1';
+const pt = 'Sensitive data 123!';
+
+const payload = encryptAEAD(pt, password, aad);
+const recovered = decryptAEAD(payload, password, aad);
+console.log('Recovered equals original?', recovered === pt);
+```
+
+```javascript
+// HMAC sign/verify
+const { sign, verifySignature } = require('encryption-lib');
+
+const mac = sign('Hello World', 'secret');
+console.log('Valid:', verifySignature('Hello World', mac, 'secret'));
+```
+
+```ts
+// TypeScript usage
+import { encryptAEAD, decryptAEAD, sign, verifySignature } from 'encryption-lib';
+
+const payload = encryptAEAD('مرحبا', 'كلمة-سر');
+console.log(decryptAEAD(payload, 'كلمة-سر'));
+
+const mac = sign('data', 'key');
+console.log(verifySignature('data', mac, 'key'));
+```
+
+> Note: The legacy pattern-based APIs remain available but are suited for obfuscation only. Prefer AEAD for real confidentiality and integrity.
 
 ## 🧩 Runtime Notes
 
